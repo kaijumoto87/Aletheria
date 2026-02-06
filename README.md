@@ -11,7 +11,7 @@ over time as features and systems are expanded.
 It is being developed as a learning project focused on game systems, combat logic, progression, and state management.
 
 The project currently exists as a text-based prototype and is intended to evolve over time as features and systems are expanded.
->>>>>>> 5c2b79d (Add initial implementation of Aletheria RPG prototype with player creation, stats, and combat mechanics.)
+>>>>>>>
 
 ---
 
