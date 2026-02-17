@@ -1,6 +1,6 @@
 """
 Notes & Plans:
-- Make coinage system and assign values to items.
+- Make coinage system and assign values to items. ----- 終わり :) -----
 - Add more item types (armor, potions, etc).
 - Add biome variety (caves, swamps, etc).
 - Seperate monsters into different biomes.
@@ -19,15 +19,16 @@ Note: First spell could be something like "Air Blast" that does 7 damage costing
 - Add a "save and quit" option that writes the player's current state to a file, and a "load game" option at the start that allows them to continue from where they left off.
 - Add a simple text-based map system that tracks the player's location in the world and allows them to navigate between different areas (village, forest, cave, etc) with unique encounters and loot in each.
 - Make more areas to explore beyond the Dark Forest, each with their own unique monsters, loot, and challenges. For example, a dark cave system with bats and giant spiders, or a haunted swamp with ghosts and poisonous plants.
-Note: When a task is completed, add a note in the code like this: " ----- IGNORE ----- " so that I can easily see what has been done and what still needs work when I review the code later.
+Note: When a task is completed, add a note in the code like this: " ----- 終わり (おわり） ----- " so that I can easily see what has been done and what still needs work when I review the code later.
 """
-# Note for next time: -----> swap all instances of "Gold" with coinage used in currency.py
 
+from data.text import TEXT
 
 print("Welcome to Aletheria!")
 print()
 print("You have now entered a world of magic and lies...")
 print("Seek the truth, adventurer. Survive if you can...")
+print(TEXT["game.start"]["jp"])
 print()
 print()
 
@@ -99,51 +100,8 @@ weapon_stats = {
     "elven bow": 6,
 }
 
-MONSTERS = [
-    {
-        "name": "Goblin",
-        "health_range": (10, 15),
-        "loot_table": ["small health potion", "gold coin", "rusty sword"],
-        "exp_reward": 10,
-    },
-    {
-        "name": "Wolf",
-        "health_range": (12, 18),
-        "loot_table": ["wolf pelt", "sharp fang", "gold coin"],
-        "exp_reward": 12,
-    },
-    {
-        "name": "Orc",
-        "health_range": (15, 22),
-        "loot_table": ["orcish axe", "gold coin", "health potion"],
-        "exp_reward": 15,
-    },
-    {
-        "name": "Dark Elf",
-        "health_range": (18, 25),
-        "mana_range": (5, 10),
-        "loot_table": ["elven bow", "magic crystal", "mana potion"],
-        "exp_reward": 20,
-    },
-    {
-        "name": "Bloody Bear",
-        "health_range": (20, 30),
-        "loot_table": ["bear claw", "thick fur", "large health potion"],
-        "exp_reward": 25,
-    },
-    {
-        "name": "Skeleton Warrior",
-        "health_range": (15, 20),
-        "loot_table": ["bone sword", "shield fragment", "gold coin"],
-        "exp_reward": 18,
-    },
-    {
-        "name": "Fenrir Wolf",
-        "health_range": (40, 65),
-        "loot_table": ["fenrir fang", "mythical pelt", "large health potion"],
-        "exp_reward": 80,
-    },
-]
+from data.monsters import MONSTERS
+from data.items import ITEMS, get_item_value 
 
 def level_up_check(player: dict) -> None:
     """Increase player level when they have enough EXP."""
@@ -151,7 +109,7 @@ def level_up_check(player: dict) -> None:
     while player["exp"] >= player["exp_to_next"]:
         player["exp"] -= player["exp_to_next"]
         player["level"] += 1
-        health_gain = random.randint(1, 3)
+        health_gain = random.randint(5, 8)
         player["health"] += health_gain
         player["strength"] += 1
         player["exp_to_next"] += random.randint(5, 10)
