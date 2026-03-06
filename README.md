@@ -48,7 +48,8 @@ Development progress is tracked over time to reflect learning and improvement ra
 Ensure Python 3 is installed, then run:
 
 ```bash
-python3 src/aletheria.py```
+python3 src/aletheria.py
+```
 
 
 ---

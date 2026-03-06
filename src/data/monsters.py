@@ -18,6 +18,7 @@ MONSTERS = [
         "attack_range": (6, 8),
         "loot_table": ["small health potion", "shille", "rusty sword"],
         "exp_reward": 10,
+        "biomes": ["dark_forest",],
     },
     {
         "name": "Wolf",
@@ -25,6 +26,7 @@ MONSTERS = [
         "attack_range": (5, 7),
         "loot_table": ["wolf pelt", "sharp fang", "shille"],
         "exp_reward": 12,
+        "biomes": ["dark_forest",],
     },
     {
         "name": "Orc",
@@ -32,6 +34,7 @@ MONSTERS = [
         "attack_range": (7, 10),
         "loot_table": ["orcish axe", "shille", "small health potion"],
         "exp_reward": 15,
+        "biomes": ["dark_forest",],
     },
     {
         "name": "Dark Elf",
@@ -40,6 +43,7 @@ MONSTERS = [
         "mana_range": (5, 10),
         "loot_table": ["elven bow", "magic crystal", "small mana potion"],
         "exp_reward": 20,
+        "biomes": ["dark_forest",], 
     },
     {
         "name": "Bloody Bear",
@@ -47,6 +51,7 @@ MONSTERS = [
         "attack_range": (10, 15),
         "loot_table": ["bear claw", "thick fur", "large health potion"],
         "exp_reward": 25,
+        "biomes": ["dark_forest",],
     },
     {
         "name": "Skeleton Warrior",
@@ -54,6 +59,7 @@ MONSTERS = [
         "attack_range": (6, 9),
         "loot_table": ["bone sword", "shield fragment", "shille"],
         "exp_reward": 18,
+        "biomes": ["alethan_ruins",],
     },
     {
         "name": "Fenrir Wolf",
@@ -62,5 +68,6 @@ MONSTERS = [
          "mana_range": (10, 20),
         "loot_table": ["fenrir fang", "mythical pelt", "large health potion"],
         "exp_reward": 80,
+        "biomes": ["dark_forest",],
     },
 ]

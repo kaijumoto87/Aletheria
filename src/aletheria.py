@@ -22,6 +22,9 @@ Note: First spell could be something like "Air Blast" that does 7 damage costing
 Note: When a task is completed, add a note in the code like this: " ----- 終わり (おわり） ----- " so that I can easily see what has been done and what still needs work when I review the code later.
 """
 
+from save_system import save_player, load_player
+from data.menu import pause_menu
+
 from data.text import TEXT
 
 print("Welcome to Aletheria!")
@@ -282,6 +285,7 @@ def combat_encounter(player: dict, monster: dict) -> bool:
     return True
 
 def forest_exploration(player: dict) -> bool:
+
     """
     Loop exploration in the Dark Forest. Return True if player leaves alive,
     False if player dies in the forest.
@@ -289,10 +293,25 @@ def forest_exploration(player: dict) -> bool:
     print("You continue into the Dark Forest. Stay alert.")
     while player["health"] > 0:
         try:
-            choice = input("What do you do? (explore, leave, inv, stats, equip, help): ").strip().lower()
+            choice = input("What do you do? (explore, leave, inv, stats, equip, menu, help): ").strip().lower()
         except (EOFError, KeyboardInterrupt):
             print("\nYou quietly leave the area.")
             return True
+
+        if choice in ("/pause", "pause", "/menu", "menu", "m"):
+            action = pause_menu(
+                player,
+                show_stats_fn=show_player_stats,
+                equip_fn=equip_weapon,
+                human_item_fn=human_item,
+                save_fn=save_player,
+            )
+
+            if action == "quit":
+                print("Goodbye Adventurer.")
+                return True
+
+            continue
 
         if choice in ("explore", "e", "investigate", "i"):
             encounter_chance = random.randint(1, 100)
@@ -325,7 +344,7 @@ def forest_exploration(player: dict) -> bool:
             equip_weapon(player)
             continue
         elif choice in ("help", "h", "?"):
-            print("Options: explore (chance to encounter), leave, inv, stats, equip, help")
+            print("Options: explore (chance to encounter), leave, inv, stats, equip, menu, help")
             continue
         else:
             print("Unrecognized command. Type 'help' for options.")
@@ -333,11 +352,25 @@ def forest_exploration(player: dict) -> bool:
     # fell out of loop because health <= 0
     print("You collapse... The darkness takes you.")
     return False
+   
+loaded_player = load_player()
 
-# Initialize player
-player = create_player()
+if loaded_player:
+    try:
+        load_choice = input("Save file found. Load game? (yes/no) ").strip().lower()
+    except (EOFError, KeyboardInterrupt):
+        print("\nGoodbye, adventurer.")
+        raise SystemExit
 
-print(f"Your starting stats:")
+    if load_choice in ("yes", "y"):
+        player = loaded_player
+        print("Game loaded successfully.")
+    else:
+        player = create_player()
+else:
+    player = create_player()
+
+print("Your starting stats:")
 show_player_stats(player)
 
 print()  
