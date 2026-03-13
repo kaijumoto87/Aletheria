@@ -17,18 +17,18 @@ def pause_menu(
                 label = human_item_fn(item) if human_item_fn else item
                 print(f"- {label}")
         else:
-            print("  (empty)")
+            print("(Empty)")
         print()
 
     while True:
         print("\n=== Pause Menu ===")
-        print("play / 1 - Resume")
-        print("inv / 2 - View Inventory")
-        print("stats / 3 - Check Status")
-        print("equip - Equip Weapon")
-        print("save / 4 - Save Game (soon)")
-        print("quit / 5 - Exit Game")
-        print("help / 6 - Help")
+        print("play/1 - Resume")
+        print("inv/2 - View Inventory")
+        print("stats/3 - Check Status")
+        print("equip/e - Equip Weapon")
+        print("save/4 - Save Game")
+        print("quit/5 - Exit Game")
+        print("help/6 - Help")
 
         choice = input("Choose: ").strip().lower()
 
@@ -64,7 +64,7 @@ def pause_menu(
                     print("\nGame saved.\n")
             return "quit"
         if choice in ("help", "6", "?"):
-            print("Commands: play, inv, stats, equip, save, quit")
+            print("Available actions: play/1, inv/2, stats/3, equip/e, save/4, quit/5, help/6")
             continue
 
         print("Unrecognized menu option. Type 'help'.")

@@ -1,12 +1,23 @@
 
 
-def add_monster(name, health_range, loot_table, exp_reward, mana_range=None):
+def add_monster(
+    name,
+    health_range,
+    loot_table,
+    exp_reward,
+    biomes=None,
+    attack_range=None,
+    mana_range=None,
+):
     monster = {
         "name": name,
         "health_range": health_range,
         "loot_table": loot_table,
         "exp_reward": exp_reward,
+        "biomes": biomes or [],
     }
+    if attack_range:
+        monster["attack_range"] = attack_range
     if mana_range:
         monster["mana_range"] = mana_range
     MONSTERS.append(monster)

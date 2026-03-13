@@ -24,6 +24,7 @@ Note: When a task is completed, add a note in the code like this: " ----- 終わ
 
 from save_system import save_player, load_player
 from data.menu import pause_menu
+from data.biomes import BIOMES
 
 from data.text import TEXT
 
@@ -133,19 +134,32 @@ def human_item(item_name: str) -> str:
     """Return human-friendly form of an item."""
     return item_name.title()
 
-def spawn_monster() -> dict:
-    """Pick a monster template and return a monster instance dict."""
-    template = random.choice(MONSTERS)
+def spawn_monster(biome: str | None = None) -> dict:
+    """Pick a monster template (optionally by biome) and return an instance dict."""
+    if biome:
+        candidates = [m for m in MONSTERS if biome in m.get("biomes", [])]
+    else:
+        candidates = MONSTERS
+
+    if not candidates:
+        raise ValueError(f"No monsters found for biome: {biome}")
+
+    template = random.choice(candidates)
     min_hp, max_hp = template["health_range"]
     hp = random.randint(min_hp, max_hp)
+
+    attack_range = template.get("attack_range")
+    if not attack_range:
+        attack_range = (1, min(8, max(3, hp // 4)))
+
     return {
         "name": template["name"],
         "max_health": hp,
         "health": hp,
         "loot_table": [canonicalize_item(x) for x in template.get("loot_table", [])],
         "exp_reward": template.get("exp_reward", 0),
-        # attack potential: scale roughly with health
-        "attack_range": (1, min(8, max(3, hp // 4))),
+        "attack_range": attack_range,
+        "biomes": template.get("biomes", []),
     }
 
 def list_weapons_in_inventory(player: dict) -> list:
@@ -209,7 +223,7 @@ def combat_encounter(player: dict, monster: dict) -> bool:
 
     while monster["health"] > 0 and player["health"] > 0:
         try:
-            action = input("Choose action (attack, run, inv, stats, equip, help): ").strip().lower()
+            action = input("Choose action (attack/a, run/r, inv/i, stats/s, equip/e, help/h): ").strip().lower()
         except (EOFError, KeyboardInterrupt):
             print("\nExiting combat.")
             return False
@@ -247,7 +261,7 @@ def combat_encounter(player: dict, monster: dict) -> bool:
             equip_weapon(player)
             continue
         elif action in ("help", "h", "?"):
-            print("Available actions: attack, run, inv (inventory), stats, equip, help")
+            print("Available actions: attack/a, run/r, inv/i, stats/s, equip/e, help/h")
             continue
         else:
             print("You hesitate and do nothing...")
@@ -284,16 +298,17 @@ def combat_encounter(player: dict, monster: dict) -> bool:
 
     return True
 
-def forest_exploration(player: dict) -> bool:
+def forest_exploration(player: dict, biome: str = "dark_forest") -> bool:
 
     """
-    Loop exploration in the Dark Forest. Return True if player leaves alive,
+    Loop exploration in a biome. Return True if player leaves alive,
     False if player dies in the forest.
     """
-    print("You continue into the Dark Forest. Stay alert.")
+    biome_name = BIOMES.get(biome, {}).get("name", {}).get("en", biome.replace("_", " ").title())
+    print(f"You continue into the {biome_name}. Stay alert.")
     while player["health"] > 0:
         try:
-            choice = input("What do you do? (explore, leave, inv, stats, equip, menu, help): ").strip().lower()
+            choice = input("What do you do? (explore/x, leave/l, inv/i, stats/s, equip/e, menu/m, help/h): ").strip().lower()
         except (EOFError, KeyboardInterrupt):
             print("\nYou quietly leave the area.")
             return True
@@ -313,10 +328,10 @@ def forest_exploration(player: dict) -> bool:
 
             continue
 
-        if choice in ("explore", "e", "investigate", "i"):
+        if choice in ("explore", "x"):
             encounter_chance = random.randint(1, 100)
             if encounter_chance <= 75:  # 75% chance to meet a monster
-                monster = spawn_monster()
+                monster = spawn_monster(biome)
                 survived = combat_encounter(player, monster)
                 if not survived:
                     print("You were slain in the forest.")
@@ -326,9 +341,9 @@ def forest_exploration(player: dict) -> bool:
                 print("You press on and find nothing... a sense of unease follows you.")
             continue
         elif choice in ("leave", "l", "retreat"):
-            print("You leave the Dark Forest and return to the village.")
+            print(f"You leave the {biome_name} and return to the village.")
             return True
-        elif choice in ("inv", "inventory"):
+        elif choice in ("inv", "inventory", "i"):
             print("\nYour Inventory:")
             if player["inventory"]:
                 for item in player["inventory"]:
@@ -344,7 +359,7 @@ def forest_exploration(player: dict) -> bool:
             equip_weapon(player)
             continue
         elif choice in ("help", "h", "?"):
-            print("Options: explore (chance to encounter), leave, inv, stats, equip, menu, help")
+            print("Available actions: explore/x, leave/l, inv/i, stats/s, equip/e, menu/m, help/h")
             continue
         else:
             print("Unrecognized command. Type 'help' for options.")
@@ -419,28 +434,28 @@ if choice == "yes" or choice.startswith("y"):
         print("\nYou quietly leave the area.")
         raise SystemExit
 
-    if investigate_choice in ("investigate", "inv", "i"):
+    if investigate_choice in ("investigate", "i"):
         encounter_chance = random.randint(1, 100)
         if encounter_chance <= 100:  # 100% chance for testing
-            monster = spawn_monster()
+            monster = spawn_monster("dark_forest")
             survived = combat_encounter(player, monster)
             if not survived:
                 print("You fall. The light fades from your eyes as the forest claims another victim...")
             else:
                 # Start loop after the initial encounter
-                left_safely = forest_exploration(player)
+                left_safely = forest_exploration(player, "dark_forest")
                 if not left_safely:
                     print("Game Over.")
         else:
             print("You discover nothing... you continue on.")
-            left_safely = forest_exploration(player)
+            left_safely = forest_exploration(player, "dark_forest")
             if not left_safely:
                 print("Game Over.")
     elif investigate_choice in ("run", "r"):
         print("You run away from the noise and decide to head back to the village for now.")
     else:
         print("You stand frozen, the noise fades, and you continue on cautiously.")
-        left_safely = forest_exploration(player)
+        left_safely = forest_exploration(player, "dark_forest")
         if not left_safely:
             print("Game Over.")
 
